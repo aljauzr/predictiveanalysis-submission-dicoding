@@ -45,6 +45,12 @@ Variabel Latitude dan Longitude merupakan variabel kesatuan, agar model ML yang 
 
 ## Data Preparation
 Pada tahap ini akan dilakukan proses Exploratory Data Analysis yang mencakup pemeriksaan missing value, nilai outlier, univariate analysis, dan multivariate analysis.
+
+Namun, sebelum masuk ke tahap EDA, kita akan mengubah variabel Latitude dan Longitude menjadi satu variabel DistanceToLA yang merepresentasikan jarak ke pusat kota (Los Angeles) menggunakan formula haversine dengan kode berikut:
+```sh
+df['DistanceToLA'] = haversine(df['Latitude'], df['Longitude'], 34.05, -118.25)
+```
+Formula Haversine adalah rumus matematika yang digunakan untuk menghitung jarak terpendek (great-circle distance) antara dua titik di permukaan bumi berdasarkan lintang (latitude) dan bujur (longitude), dengan asumsi bahwa bumi berbentuk bulat sempurna. Parameter `34.05` dan `118.25` adalah latitude dan longitude untuk kota Los Angeles secara berurutan.
 ### EDA - Missing Value
 Untuk memeriksa apakah terdapat missing value, jalankan kode berikut:
 ```sh
@@ -84,13 +90,34 @@ Untuk melihat visualisasi univariate analysis, kita dapat melakukannya dengan me
 df.hist(bins=50, figsize=(20,15))
 plt.show()
 ```
-Sehingga tampil gambar berikut:
+Sehingga menghasilkan gambar berikut:
 ![EDA - Univariate Analysis](images/EDA%20-%20Univariate%20Analysis.png)
 Pada variabel target, yaitu variabel MedHouseVal, dapat dilihat bahwa:
 - Peningkatan harga rumah sebanding dengan penurunan jumlah sampel. Hal ini dapat kita lihat jelas dari histogram "MedHouseVal" yang grafiknya mengalami penurunan seiring dengan semakin banyaknya jumlah sampel (sumbu y). Namun terdapat suatu harga di antara 4-5 (ratus ribu dolar AS) yang memiliki sampel yang tinggi.
 - Rentang harga rumah cukup beragam yaitu dari skala puluhan ribu dolar hingga >$500.000 Amerika Serikat.
 - Distribusi harga miring ke kanan (right-skewed). Hal ini akan berimplikasi pada model.
+### EDA - Multivariate Analysis
+Untuk mengamati hubungan antara fitur numerik, kita akan menggunakan fungsi pairplot() dengan kode berikut:
+```sh
+sns.pairplot(df, diag_kind = 'kde')
+```
+Sehingga menghasilkan gambar berikut:
+![EDA - Multivariate Analysis](images/EDA%20-%20Multivariate%20Analysis.png)
+Variabel MedHouseVal yang menjadi variabel target berada di baris ke-7. Sebaran data yang terlihat pada plot masih acak, kecuali pada variabel MedInc dan DistanceToLA. Variabel MedInc berbanding lurus dengan variabel target, sedangkan variabel DistanceToLA berbanding terbalik dengan variabel target. Artinya, semakin tinggi median pendapatan maka semakin tinggi juga harga perumahan, dan semakin jauh perumahan tersebut dari pusat kota, maka harga perumahan semakin rendah.
 
+Untuk memperjelas nilai korelasi seluruh variabel numerik dengan variabel target, kita akan menggunakan visualisasi correlation matrix dengan kode berikut:
+```sh
+plt.figure(figsize=(10, 8))
+correlation_matrix = df[numerical_features].corr().round(2)
+sns.heatmap(data=correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5, )
+plt.title("Correlation Matrix untuk Fitur Numerik ", size=20)
+```
+Sehingga menghasilkan gambar berikut:
+![Correlation Matrix](images/Correlation%20Matrix.png)
+Setelah diamati, variabel yang memiliki nilai korelasi tertinggi adalah variabel MedInc (korelasi positif), AveRooms (korelasi positif), AveOccup (korelasi negatif), DistanceToLA (korelasi negatif), HouseAge (korelasi positif), dan AveBedrms (korelasi negatif). Variabel Population memiliki nilai korelasi yang rendah, yaitu -0,03 (kurang dari ±0.1), sehingga variabel ini akan dihapus dan tidak diikutsertakan dalam perhitungan dengan kode berikut:
+```sh
+df.drop(['Population'], inplace=True, axis=1)
+```
 ## Modeling
 Tahapan ini membahas mengenai model machine learning yang digunakan untuk menyelesaikan permasalahan. Anda perlu menjelaskan tahapan dan parameter yang digunakan pada proses pemodelan.
 
