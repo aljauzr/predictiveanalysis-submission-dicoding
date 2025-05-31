@@ -40,6 +40,7 @@ Dataset ini berisi 20.640 baris data dan 9 kolom (8 fitur dan 1 target).
 | Latitude | float64 | Koordinat geografis lintang. |
 | Longitude | float64 | Koordinat geografis bujur. |
 | MedHouseVal | float64 | Median nilai rumah dalam satu blok (dalam ratusan ribu dolar AS). |
+
 Variabel Latitude dan Longitude merupakan variabel kesatuan, agar model ML yang digunakan dapat menginterpretasikan variabel ini lebih mudah, maka pada tahap Data Preparation kita akan mengubah kedua variabel tersebut menjadi satu variabel: DistanceToLA, yaitu jarak ke pusat kota (Los Angeles).
 
 ## Data Preparation
@@ -84,7 +85,7 @@ df.hist(bins=50, figsize=(20,15))
 plt.show()
 ```
 Sehingga tampil gambar berikut:
-![EDA - Univariate Analysis](images/EDA - Univariate Analysis.png)
+![EDA - Univariate Analysis](images/EDA%20-%20Univariate%20Analysis.png)
 Pada variabel target, yaitu variabel MedHouseVal, dapat dilihat bahwa:
 - Peningkatan harga rumah sebanding dengan penurunan jumlah sampel. Hal ini dapat kita lihat jelas dari histogram "MedHouseVal" yang grafiknya mengalami penurunan seiring dengan semakin banyaknya jumlah sampel (sumbu y). Namun terdapat suatu harga di antara 4-5 (ratus ribu dolar AS) yang memiliki sampel yang tinggi.
 - Rentang harga rumah cukup beragam yaitu dari skala puluhan ribu dolar hingga >$500.000 Amerika Serikat.
