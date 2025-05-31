@@ -77,6 +77,7 @@ sns.boxplot(x=df['{namaKolom}'])
 ```
 Hasil untuk seluruh kolom ditampilkan pada gambar berikut:
 ![Boxplots](images/Boxplots.png)
+
 Berdasarkan gambar tersebut dapat diketahui bahwa terdapat outlier pada variabel MedInc, AveRooms, AveBedrms, Population, AveOccup, dan MedHouseVal. Maka dari itu, kita akan melakukan teknik winsorizing, yaitu mengubah nilai outlier menjadi nilai ambang atas atau ambang bawah, sehingga tidak mengurangi data yang sudah ada.
 Teknik winsorizing dapat dilakukan dengan menerapkan kode berikut:
 ```sh
@@ -92,6 +93,7 @@ plt.show()
 ```
 Sehingga menghasilkan gambar berikut:
 ![EDA - Univariate Analysis](images/EDA%20-%20Univariate%20Analysis.png)
+
 Pada variabel target, yaitu variabel MedHouseVal, dapat dilihat bahwa:
 - Peningkatan harga rumah sebanding dengan penurunan jumlah sampel. Hal ini dapat kita lihat jelas dari histogram "MedHouseVal" yang grafiknya mengalami penurunan seiring dengan semakin banyaknya jumlah sampel (sumbu y). Namun terdapat suatu harga di antara 4-5 (ratus ribu dolar AS) yang memiliki sampel yang tinggi.
 - Rentang harga rumah cukup beragam yaitu dari skala puluhan ribu dolar hingga >$500.000 Amerika Serikat.
@@ -103,6 +105,7 @@ sns.pairplot(df, diag_kind = 'kde')
 ```
 Sehingga menghasilkan gambar berikut:
 ![EDA - Multivariate Analysis](images/EDA%20-%20Multivariate%20Analysis.png)
+
 Variabel MedHouseVal yang menjadi variabel target berada di baris ke-7. Sebaran data yang terlihat pada plot masih acak, kecuali pada variabel MedInc dan DistanceToLA. Variabel MedInc berbanding lurus dengan variabel target, sedangkan variabel DistanceToLA berbanding terbalik dengan variabel target. Artinya, semakin tinggi median pendapatan maka semakin tinggi juga harga perumahan, dan semakin jauh perumahan tersebut dari pusat kota, maka harga perumahan semakin rendah.
 
 Untuk memperjelas nilai korelasi seluruh variabel numerik dengan variabel target, kita akan menggunakan visualisasi correlation matrix dengan kode berikut:
@@ -114,6 +117,7 @@ plt.title("Correlation Matrix untuk Fitur Numerik ", size=20)
 ```
 Sehingga menghasilkan gambar berikut:
 ![Correlation Matrix](images/Correlation%20Matrix.png)
+
 Setelah diamati, variabel yang memiliki nilai korelasi tertinggi adalah variabel MedInc (korelasi positif), AveRooms (korelasi positif), AveOccup (korelasi negatif), DistanceToLA (korelasi negatif), HouseAge (korelasi positif), dan AveBedrms (korelasi negatif). Variabel Population memiliki nilai korelasi yang rendah, yaitu -0,03 (kurang dari ±0.1), sehingga variabel ini akan dihapus dan tidak diikutsertakan dalam perhitungan dengan kode berikut:
 ```sh
 df.drop(['Population'], inplace=True, axis=1)
