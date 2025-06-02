@@ -163,11 +163,7 @@ plt.title("Correlation Matrix untuk Fitur Numerik ", size=20)
 df.drop(['Population'], inplace=True, axis=1)
 df.head()
 
-"""Modelling
----
-
-**Train-Test Split**
-"""
+"""**Train-Test Split**"""
 
 from sklearn.model_selection import train_test_split
 
@@ -187,6 +183,10 @@ scaler = StandardScaler()
 scaler.fit(X_train[numerical_features])
 X_train[numerical_features] = scaler.transform(X_train.loc[:, numerical_features])
 X_train[numerical_features].head()
+
+"""Modelling
+---
+"""
 
 # Siapkan dataframe untuk analisis model
 models = pd.DataFrame(index=['train_mse', 'test_mse'],
