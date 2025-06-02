@@ -232,7 +232,7 @@ Hasil dari evaluasi ketiga model tersebut adalah sebagai berikut:
 Dan jika divisualisasikan dengan horizontal barplot akan seperti ini:
 ![MSE](images/MSE.png)
 
-Secara keseluruhan, ketiga model memberikan nilai MSE pada proses training dan testing relatif kecil. Random Forest (RF) memberikan nilai eror yang paling kecil, namun perbandingan nilai MSE antara proses training dan testing cukup jauh, ini menunjukkan bahwa model tersebut mengalami masalah overfitting. K-Nearest Neighbor (KNN) memberikan nilai eror terkecil kedua, namun masih terdapat perbedaan yang cukup signifikan pada nilai MSE antara proses training dan testing. Sedangkan model AdaBoost memiliki eror yang paling besar (berdasarkan grafik, angkanya di atas 800), namun nilai MSE yang diperoleh oleh model ini pada proses training dan testing tidak berbeda jauh, sehingga dapat dikatakan bahwa model inilah yang paling stabil.
+Secara keseluruhan, ketiga model memberikan nilai MSE pada proses training dan testing relatif kecil. Random Forest (RF) memberikan nilai eror yang paling kecil, namun perbandingan nilai MSE antara proses training dan testing cukup jauh, ini menunjukkan bahwa model tersebut mengalami masalah overfitting. K-Nearest Neighbor (KNN) memberikan nilai eror terkecil kedua, namun masih terdapat perbedaan yang cukup signifikan pada nilai MSE antara proses training dan testing. Sedangkan model AdaBoost memiliki eror yang paling besar (berdasarkan grafik, angkanya di atas 0.0005), namun nilai MSE yang diperoleh oleh model ini pada proses training dan testing tidak berbeda jauh, sehingga dapat dikatakan bahwa model inilah yang paling stabil.
 
 Untuk mengujinya, kita akan membuat prediksi menggunakan kode berikut:
 ```sh
