@@ -195,6 +195,7 @@ models.loc['train_mse','Boosting'] = mean_squared_error(y_pred=boosting.predict(
 ## Evaluation
 Ketiga model yang telah disebutkan akan dievaluasi menggunakan metrik Mean Squared Error (MSE) untuk menentukan performa terbaik. MSE adalah ukuran rata-rata dari kuadrat selisih antara nilai prediksi model dengan nilai sebenarnya. Semakin kecil nilai MSE, semakin baik performa model dalam memprediksi data, karena menunjukkan bahwa prediksi model mendekati nilai aktual. MSE dirumuskan sebagai berikut:
 ![Formula MSE](images/Formula.png)
+
 Di mana:
 - n = jumlah data (observasi)
 - yi = nilai aktual (true value) ke-i
