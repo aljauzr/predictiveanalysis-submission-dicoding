@@ -143,15 +143,16 @@ scaler.fit(X_train[numerical_features])
 X_train[numerical_features] = scaler.transform(X_train.loc[:, numerical_features])
 ```
 Setelah standardisasi diterapkan, maka table statistik deskriptif dari data training menjadi seperti ini:
-| Medinc | HouseAge | AveRooms | AveBedrms | AveOccup | DistanceToLA |
-| ------ | ------ | ------ | ------ | ------ | ------ |
-| **count** | 16510.0000 | 16510.0000 | 16510.0000 | 16510.0000 | 16510.0000 | 16510.0000 | | **mean** | 3.870671 | 28.639486 | 5.429000 | 1.096675 | 1425.476744 | 3.070655 |
-| **std** | 1.899822 | 12.585558 | 2.474173	| 0.473911 | 1132.462122 | 10.386050 |
-| **min** | 0.499900 | 1.000000 | 0.846154 | 0.333333 | 3.000000 | 0.692308	|
-| **25%** | 2.563400 | 18.000000 | 4.440716 | 1.006079 | 787.000000 | 2.429741 |
-| **50%** | 3.534800 | 29.000000 | 5.229129 | 1.048780 | 1166.000000 | 2.818116 |
-| **75%** | 4.743250 | 37.000000 | 6.052381 | 1.099526 | 1725.000000 | 3.282261 |
-| **max** | 15.000100 | 52.000000 | 141.909091 | 34.066667 | 35682.000000 |
+| | Medinc | HouseAge | AveRooms | AveBedrms | AveOccup | DistanceToLA |
+| ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+| **count** | 16510.0000 | 16510.0000 | 16510.0000 | 16510.0000 | 16510.0000 | 16510.0000 |
+| **mean** | -0.0000 | 0.0000 | -0.0000 | 0.0000 | 0.0000 |	0.0000 |
+| **std** | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| **min** | -1.9864 | -2.2001 | -2.6294 | -2.3873 | -2.5302 | -1.0807|
+| **25%** | -0.7443 | -0.8479 | -0.6950 | -0.6506 | -0.6792 | -0.9549 |
+| **50%** | -0.1635 | 0.0270 | -0.0587 | -0.1158 | -0.1154 | -0.3863 |
+| **75%** | 0.5637 | 0.6634 | 0.5989 | 0.5201 | 0.5515 | 1.0405 |
+| **max** | 2.5382 | 1.8565 | 2.5422 | 2.2489 | 2.4099 | 3.0317 |
 
 ## Modelling
 Untuk menyelesaikan permasalahan, tiga model machine learning akan digunakan, yaitu K-Nearest Neighbor (KNN), Random Forest (RF), dan Adaptive Boosting (AdaBoost).
@@ -245,6 +246,7 @@ Hasil yang ditampilkan seperti berikut:
 | | y_true | prediksi_KNN | prediksi_RF | prediksi_Boosting |
 | ------ | ------ | ------ | ------ | ------ |
 | **4414** | 1.743 | 1.9 | 2.3 | 1.8 |
+
 Data yang diprediksi oleh kode tersebut adalah data dengan index ke-4414 dengan nilai y_true (MedHouseVal atau harga asli) bernilai 1.743. Nilai yang diprediksi oleh KNN yaitu 1.9, RF 2.3, dan AdaBoost 1.8. Dapat dilihat bahwa AdaBoost memprediksi nilai yang terdekat dengan nilai aslinya.
 
 **---Ini adalah bagian akhir laporan---**
