@@ -303,4 +303,5 @@ Untuk menjawab Problem Statements dan Goals pada proses Business Understanding, 
 
 Setiap solusi statement yang digunakan pada penelitian ini berdampak, mulai dari perubahan format data (Latitude dan Longitude menjadi DistanceToLA) agar model memahami variabel lebih baik, penanganan data yang hilang, outlier, dan pemilihan variabel yang signifikan. Hasil ini ditunjukkan oleh nilai Mean Squared Error (MSE) yang rendah oleh ketiga model, yaitu di bawah
 0.0006.
+
 **---Ini adalah bagian akhir laporan---**
