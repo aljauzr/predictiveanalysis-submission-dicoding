@@ -9,7 +9,7 @@ Dalam proyek ini, akan dilakukan analisis dan pembuatan model prediksi harga rum
 ## Business Understanding
 
 ### Problem Statements
-1. Bagaimana hubungan antara faktor demografis (seperti kepadatan penduduk dan tingkat pendidikan) dengan harga rumah?
+1. Bagaimana hubungan antara faktor demografis (seperti kepadatan penduduk dan tingkat pendapatan) dengan harga rumah?
 2. Dapatkah kita memprediksi harga median rumah di suatu daerah menggunakan data demografis dan geografis?
 3. Fitur apa yang paling berpengaruh terhadap harga rumah di California?
 
@@ -55,14 +55,14 @@ df.info()
 Hasil yang tampil adalah:
 | # | Column | Non-Null Count | Dtype |
 | ------ | ------ | ------ | ------ |
-| 1 | MedInc | 20640 non-null | float64 |
-| 2 | HouseAge | 20640 non-null | float64 |
-| 3 | AveRooms | 20640 non-null | float64 |
-| 4 | AveBedrms | 20640 non-null | float64 |
-| 5 | Population | 20640 non-null | float64 |
-| 6 | AveOccup | 20640 non-null | float64 |
-| 7 | MedHouseVal | 20640 non-null | float64 |
-| 8 | DistanceToLA | 20640 non-null | float64 |
+| 0 | MedInc | 20640 non-null | float64 |
+| 1 | HouseAge | 20640 non-null | float64 |
+| 2 | AveRooms | 20640 non-null | float64 |
+| 3 | AveBedrms | 20640 non-null | float64 |
+| 4 | Population | 20640 non-null | float64 |
+| 5 | AveOccup | 20640 non-null | float64 |
+| 6 | MedHouseVal | 20640 non-null | float64 |
+| 7 | DistanceToLA | 20640 non-null | float64 |
 
 Berdasarkan output yang tampil, tidak terlihat adanya missing value, namun kita akan memeriksa lebih mendalam menggunakan kode `df.describe()`. Output yang ditampilkan pada kode tersebut adalah seperti ini:
 | | Medinc | HouseAge | AveRooms | AveBedrms | Population | AveOccup | MedHouseVal | DistanceToLA
@@ -91,7 +91,7 @@ sns.boxplot(x=df['{namaKolom}'])
 Hasil untuk seluruh kolom ditampilkan pada gambar berikut:
 ![Boxplots](images/Boxplots.png)
 
-Berdasarkan gambar tersebut dapat diketahui bahwa terdapat outlier pada variabel MedInc, AveRooms, AveBedrms, Population, AveOccup, dan MedHouseVal. Maka dari itu, pada proses Data Preparation kita akan menangani masalah ini menggunakan teknik winsorizing. {!!!!!!!!}
+Berdasarkan gambar tersebut dapat diketahui bahwa terdapat outlier pada variabel MedInc, AveRooms, AveBedrms, Population, AveOccup, dan MedHouseVal. Maka dari itu, pada proses Data Preparation kita akan menangani masalah ini menggunakan teknik winsorizing.
 
 ### EDA - Univariate Analysis
 Untuk melihat visualisasi univariate analysis, kita dapat melakukannya dengan menerapkan visualisasi histogram dengan kode berikut:
@@ -226,6 +226,7 @@ models.loc['train_mse','Boosting'] = mean_squared_error(y_pred=boosting.predict(
 
 ## Evaluation
 Ketiga model yang telah disebutkan akan dievaluasi menggunakan metrik Mean Squared Error (MSE) untuk menentukan performa terbaik. MSE adalah ukuran rata-rata dari kuadrat selisih antara nilai prediksi model dengan nilai sebenarnya. Semakin kecil nilai MSE, semakin baik performa model dalam memprediksi data, karena menunjukkan bahwa prediksi model mendekati nilai aktual. MSE dirumuskan sebagai berikut:
+
 ![Formula MSE](images/Formula.png)
 
 Di mana:
@@ -282,4 +283,24 @@ Hasil yang ditampilkan seperti berikut:
 
 Data yang diprediksi oleh kode tersebut adalah data dengan index ke-4414 dengan nilai y_true (MedHouseVal atau harga asli) bernilai 1.743. Nilai yang diprediksi oleh KNN yaitu 1.9, RF 2.3, dan AdaBoost 1.8. Dapat dilihat bahwa AdaBoost memprediksi nilai yang terdekat dengan nilai aslinya.
 
+Untuk menjawab Problem Statements dan Goals pada proses Business Understanding, kita akan mengevaluasi masalah tersebut secara bertahap.
+
+### Problem Statements - Jawaban
+1. Bagaimana hubungan antara faktor demografis (seperti kepadatan penduduk dan tingkat pendapatan) dengan harga rumah?
+- Jawaban: Berdasarkan variabel pada dataset California Housing, variabel yang merepresentasikan faktor demografis seperti pendapatan (MedInc) dan populasi (Population dan AveOccup) memiliki pengaruh yang cukup signifikan dalam menentukan harga rumah. Untuk faktor pendapatan (MedInc), variabel ini berkorelasi positif terhadap harga rumah, dengan kata lain, semakin tinggi pendapatan penduduk di perumahan tersebut, maka harga rumah di wilayah tersebut juga semakin tinggi. Untuk faktor populasi (Popluation dan AveOccup), variabel tersebut berkorelasi negatif terhadap harga rumah, dengan kata lain, semakin tinggi populasi yang ada di perumahan tersebut, maka harga rumah di wilayah tersebut juga semakin rendah.
+2. Dapatkah kita memprediksi harga median rumah di suatu daerah menggunakan data demografis dan geografis?
+- Jawaban: Ya, kita dapat memprediksi harga median rumah di suatu daerah menggunakan data demografis dan geografis. Beberapa variabel yang digunakan dalam dataset pada penelitian ini sudah merepresentasikan faktor demografis dan geografis. Ada pun variabel yang merepresentasikan faktor demografis adalah pendapatan (MedInc) dan populasi (Population dan AveOccup). Sedangkan faktor geografis direpresentasikan oleh variabel Latitude dan Longitude (yang kemudian diubah menjadi variabel yang merepresentasikan jarak ke pusat kota, yaitu variabel DistanceToLA). Namun, lebih baik jika kita menambahkan variabel yang merepresentasikan faktor properti seperti jumlah kamar dan usia rumah agar hasil prediksi menjadi lebih baik.
+3. Fitur apa yang paling berpengaruh terhadap harga rumah di California?
+- Jawaban: Berdasarkan tahapan pada Data Understanding, khususnya visualisasi variabel numerik terhadap variabel target, fitur yang paling berpengaruh adalah fitur MedInc (korelasi positif), AveRooms (korelasi positif), AveOccup (korelasi negatif), DistanceToLA (korelasi negatif), HouseAge (korelasi positif), dan AveBedrms (korelasi negatif) secara berurutan.
+
+### Goals - Jawaban
+1. Mengetahui fitur-fitur yang secara signifikan berkorelasi dengan harga rumah.
+- Jawaban: Ya, tujuan ini sudah tercapai pada saat proses memvisualisasikan pengaruh variabel numerik terhadap variabel target dengan visualisasi Correlation Matrix.
+2. Membangun model prediksi harga rumah berdasarkan fitur yang tersedia.
+- Jawaban: Ya tujuan ini sudah tercapai pada tahap Evaluasi, khususnya bagian Prediksi yang menggunakan 3 model (KNN, RF, dan AdaBoost) untuk memprediksi harga rumah dengan jumlah data tertentu.
+3. Menganalisis pentingnya masing-masing fitur untuk memahami kontribusinya terhadap nilai harga rumah.
+- Jawaban: Ya, tujuan ini sudah tercapai pada saat proses memvisualisasikan pengaruh variabel numerik terhadap variabel target dengan visualisasi Correlation Matrix.
+
+Setiap solusi statement yang digunakan pada penelitian ini berdampak, mulai dari perubahan format data (Latitude dan Longitude menjadi DistanceToLA) agar model memahami variabel lebih baik, penanganan data yang hilang, outlier, dan pemilihan variabel yang signifikan. Hasil ini ditunjukkan oleh nilai Mean Squared Error (MSE) yang rendah oleh ketiga model, yaitu di bawah
+0.0006.
 **---Ini adalah bagian akhir laporan---**
