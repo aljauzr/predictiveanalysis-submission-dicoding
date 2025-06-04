@@ -41,22 +41,30 @@ Dataset ini berisi 20.640 baris data dan 9 kolom (8 fitur dan 1 target).
 | Longitude | float64 | Koordinat geografis bujur. |
 | MedHouseVal | float64 | Median nilai rumah dalam satu blok (dalam ratusan ribu dolar AS). |
 
-Variabel Latitude dan Longitude merupakan variabel kesatuan, agar model ML yang digunakan dapat menginterpretasikan variabel ini lebih mudah, maka pada tahap Data Preparation kita akan mengubah kedua variabel tersebut menjadi satu variabel: DistanceToLA, yaitu jarak ke pusat kota (Los Angeles).
-
-## Data Preparation
-Pada tahap ini akan dilakukan proses Exploratory Data Analysis yang mencakup pemeriksaan missing value, nilai outlier, univariate analysis, dan multivariate analysis. Setelah tahap EDA dilakukan, selanjutnya kita akan melakukan tahapan Train-Test Split dan Standardisasi untuk mempersiapkan data agar dapat diolah oleh model machine learning.
-
-Namun, sebelum masuk ke tahap EDA, kita akan mengubah variabel Latitude dan Longitude menjadi satu variabel DistanceToLA yang merepresentasikan jarak ke pusat kota (Los Angeles) menggunakan formula haversine dengan kode berikut:
+Variabel Latitude dan Longitude merupakan variabel kesatuan, agar model ML yang digunakan dapat menginterpretasikan variabel ini lebih mudah, kita akan mengubah kedua variabel tersebut menjadi satu variabel: DistanceToLA, yaitu jarak ke pusat kota (Los Angeles) menggunakan fungsi haversine dengan kode berikut:
 ```sh
 df['DistanceToLA'] = haversine(df['Latitude'], df['Longitude'], 34.05, -118.25)
 ```
 Formula Haversine adalah rumus matematika yang digunakan untuk menghitung jarak terpendek (great-circle distance) antara dua titik di permukaan bumi berdasarkan lintang (latitude) dan bujur (longitude), dengan asumsi bahwa bumi berbentuk bulat sempurna. Parameter `34.05` dan `118.25` adalah latitude dan longitude untuk kota Los Angeles secara berurutan.
+
 ### EDA - Missing Value
 Untuk memeriksa apakah terdapat missing value, jalankan kode berikut:
 ```sh
-df.describe()
+df.info()
 ```
-Output yang tampil seperti ini:
+Hasil yang tampil adalah:
+| # | Column | Non-Null Count | Dtype |
+| ------ | ------ | ------ | ------ |
+| 1 | MedInc | 20640 non-null | float64 |
+| 2 | HouseAge | 20640 non-null | float64 |
+| 3 | AveRooms | 20640 non-null | float64 |
+| 4 | AveBedrms | 20640 non-null | float64 |
+| 5 | Population | 20640 non-null | float64 |
+| 6 | AveOccup | 20640 non-null | float64 |
+| 7 | MedHouseVal | 20640 non-null | float64 |
+| 8 | DistanceToLA | 20640 non-null | float64 |
+
+Berdasarkan output yang tampil, tidak terlihat adanya missing value, namun kita akan memeriksa lebih mendalam menggunakan kode `df.describe()`. Output yang ditampilkan pada kode tersebut adalah seperti ini:
 | | Medinc | HouseAge | AveRooms | AveBedrms | Population | AveOccup | MedHouseVal | DistanceToLA
 | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
 | **count** | 20640.000000 | 20640.000000 | 20640.000000 | 20640.000000 | 20640.000000 | 20640.000000 | 20640.000000 | 20640.000000 |
@@ -68,7 +76,12 @@ Output yang tampil seperti ini:
 | **75%** | 4.743250 | 37.000000 | 6.052381 | 1.099526 | 1725.000000 | 3.282261 | 2.647250 | 526.985985 |
 | **max** | 15.000100 | 52.000000 | 141.909091 | 34.066667 | 35682.000000 | 1243.333333 | 5.000010 | 1018.198911 |
 
-Terdapat missing value (bernilai 0) pada kolom DistanceToLA dan setelah dilakukan pemeriksaan, baris dengan missing value tersebut hanya ada dua. Jumlah ini tergolong kecil dibandingkan jumlah keseluruhan baris, maka dari itu baris tersebut akan dihapus.
+Pada baris `min` di kolom `DistanceToLA`, terdapat nilai 0. Untuk memeriksa seberapa banyak data yang memiliki nilai 0 ini, kita akan menjalankan kode berikut:
+```sh
+DistanceToLA = (df.DistanceToLA == 0).sum()
+print("Nilai 0 di kolom DistanceToLA ada: ", DistanceToLA)
+```
+Diketahui bahwa nilai 0 di kolom DistanceToLA hanya ada 2, jumlah ini tergolong kecil dibandingkan jumlah keseluruhan baris, maka dari itu baris tersebut akan dihapus pada tahap Data Preparation.
 
 ### EDA - Outlier
 Untuk memeriksa nilai outlier, kita perlu memvisualisasikan persebaran data setiap kolom menggunakan boxplot dengan kode berikut:
@@ -78,12 +91,7 @@ sns.boxplot(x=df['{namaKolom}'])
 Hasil untuk seluruh kolom ditampilkan pada gambar berikut:
 ![Boxplots](images/Boxplots.png)
 
-Berdasarkan gambar tersebut dapat diketahui bahwa terdapat outlier pada variabel MedInc, AveRooms, AveBedrms, Population, AveOccup, dan MedHouseVal. Maka dari itu, kita akan melakukan teknik winsorizing, yaitu mengubah nilai outlier menjadi nilai ambang atas atau ambang bawah, sehingga tidak mengurangi data yang sudah ada.
-Teknik winsorizing dapat dilakukan dengan menerapkan kode berikut:
-```sh
-df[numeric_cols] = df[numeric_cols].clip(lower=lower_bound, upper=upper_bound, axis=1)
-```
-Di mana `numeric_cols` adalah variabel yang bertipe data angka, `lower_bound` adalah batas bawah, dan `upper_bound` adalah batas atas. Jika ada nilai yang melewati batas bawah, maka nilai tersebut akan dijadikan nilai batas bawah, begitu juga dengan kasus outlier yang melewati batas atas.
+Berdasarkan gambar tersebut dapat diketahui bahwa terdapat outlier pada variabel MedInc, AveRooms, AveBedrms, Population, AveOccup, dan MedHouseVal. Maka dari itu, pada proses Data Preparation kita akan menangani masalah ini menggunakan teknik winsorizing. {!!!!!!!!}
 
 ### EDA - Univariate Analysis
 Untuk melihat visualisasi univariate analysis, kita dapat melakukannya dengan menerapkan visualisasi histogram dengan kode berikut:
@@ -98,6 +106,7 @@ Pada variabel target, yaitu variabel MedHouseVal, dapat dilihat bahwa:
 - Peningkatan harga rumah sebanding dengan penurunan jumlah sampel. Hal ini dapat kita lihat jelas dari histogram "MedHouseVal" yang grafiknya mengalami penurunan seiring dengan semakin banyaknya jumlah sampel (sumbu y). Namun terdapat suatu harga di antara $400.0000 - $500.000 AS yang memiliki sampel yang tinggi.
 - Rentang harga rumah cukup beragam yaitu dari skala puluhan ribu dolar hingga >$500.000 AS.
 - Distribusi harga miring ke kanan (right-skewed). Hal ini akan berimplikasi pada model.
+
 ### EDA - Multivariate Analysis
 Untuk mengamati hubungan antara fitur numerik, kita akan menggunakan fungsi pairplot() dengan kode berikut:
 ```sh
@@ -107,7 +116,6 @@ Sehingga menghasilkan gambar berikut:
 ![EDA - Multivariate Analysis](images/EDA%20-%20Multivariate%20Analysis.png)
 
 Variabel MedHouseVal yang menjadi variabel target berada di baris ke-7. Sebaran data yang terlihat pada plot masih acak, kecuali pada variabel MedInc dan DistanceToLA. Variabel MedInc terlihat berkorelasi positif dengan variabel target, sedangkan variabel DistanceToLA terlihat berkorelasi negatif terbalik dengan variabel target. Artinya, semakin tinggi median pendapatan maka semakin tinggi juga harga perumahan, dan semakin jauh perumahan tersebut dari pusat kota, maka harga perumahan semakin rendah.
-
 Untuk memperjelas nilai korelasi seluruh variabel numerik dengan variabel target, kita akan menggunakan visualisasi correlation matrix dengan kode berikut:
 ```sh
 plt.figure(figsize=(10, 8))
@@ -118,7 +126,28 @@ plt.title("Correlation Matrix untuk Fitur Numerik ", size=20)
 Sehingga menghasilkan gambar berikut:
 ![Correlation Matrix](images/Correlation%20Matrix.png)
 
-Setelah diamati, variabel yang memiliki nilai korelasi tertinggi adalah variabel MedInc (korelasi positif), AveRooms (korelasi positif), AveOccup (korelasi negatif), DistanceToLA (korelasi negatif), HouseAge (korelasi positif), dan AveBedrms (korelasi negatif) secara berurutan. Variabel Population memiliki nilai korelasi yang rendah, yaitu -0,03 (kurang dari ±0.1), sehingga variabel ini akan dihapus dan tidak diikutsertakan dalam perhitungan dengan kode berikut:
+Setelah diamati, variabel yang memiliki nilai korelasi tertinggi adalah variabel MedInc (korelasi positif), AveRooms (korelasi positif), AveOccup (korelasi negatif), DistanceToLA (korelasi negatif), HouseAge (korelasi positif), dan AveBedrms (korelasi negatif) secara berurutan.
+
+## Data Preparation
+Pada tahap ini akan dilakukan penanganan missing value dan outlier dan pemilihan variabel yang paling berkolerasi terhadap variabel target, yaitu MedHouseVal. Selanjutnya, kita akan melakukan tahapan Train-Test Split dan Standardisasi 
+
+### Penanganan Missing Value
+Berdasarkan informasi yang didapatkan pada tahap Data Understanding, jumlah baris yang memiliki missing value hanya ada 2. Maka dari itu kita akan menghapus baris tersebut karena hanya sebagian kecil dari jumlah data yang ada.
+```sh
+# Drop baris dengan nilai 'DistanceToLA' = 0
+df = df.loc[(df[['DistanceToLA']]!=0).all(axis=1)]
+```
+Dengan begitu, maka jumlah data yang kita miliki sekarang adalah 20,638 data.
+
+### Penanganan Outlier
+Untuk menangani nilai outlier kita akan melakukan teknik winsorizing, yaitu mengubah nilai outlier menjadi nilai ambang atas atau ambang bawah, sehingga tidak mengurangi data yang sudah ada. Teknik winsorizing dapat dilakukan dengan menerapkan kode berikut:
+```sh
+df[numeric_cols] = df[numeric_cols].clip(lower=lower_bound, upper=upper_bound, axis=1)
+```
+Di mana `numeric_cols` adalah variabel yang bertipe data angka, `lower_bound` adalah batas bawah, dan `upper_bound` adalah batas atas. Jika ada nilai yang melewati batas bawah, maka nilai tersebut akan dijadikan nilai batas bawah, begitu juga dengan kasus outlier yang melewati batas atas.
+
+### Pemilihan Variabel
+Berdasarkan visualisasi Correlation Matrix seluruh variabel numerik terhadap variabel target (MedHouseVal), variabel Population memiliki nilai korelasi yang rendah, yaitu -0,03 (kurang dari ±0.1), sehingga variabel ini akan dihapus dan tidak diikutsertakan dalam perhitungan. Hal ini dapat dilakukan menggunakan kode berikut:
 ```sh
 df.drop(['Population'], inplace=True, axis=1)
 ```
@@ -162,6 +191,7 @@ models = pd.DataFrame(index=['train_mse', 'test_mse'],
                       columns=['KNN', 'RandomForest', 'Boosting'])
 ```                      
 ### K-Nearest Neighbor (KNN)
+K-Nearest Neighbor adalah algoritma berbasis instance-based learning, yang berarti ia tidak membentuk model eksplisit melainkan membuat prediksi berdasarkan kedekatan terhadap data latih. Dalam konteks regresi, KNN akan mencari sejumlah k tetangga terdekat dari data uji berdasarkan metrik jarak (umumnya Euclidean), kemudian memprediksi nilai target dengan rata-rata dari target tetangga-tetangga tersebut. Semakin kecil nilai k, model menjadi lebih kompleks dan sensitif terhadap noise (overfitting), sementara nilai k yang besar dapat menyebabkan underfitting.
 Untuk melatih model KNN, dapat dilakukan dengan kode berikut:
 ```sh
 from sklearn.neighbors import KNeighborsRegressor
@@ -173,6 +203,7 @@ knn.fit(X_train, y_train)
 models.loc['train_mse','knn'] = mean_squared_error(y_pred = knn.predict(X_train), y_true=y_train)
 ```
 ### Random Forest (RF)
+Random Forest merupakan algoritma ensemble learning berbasis bagging, yang menggabungkan banyak decision tree untuk meningkatkan akurasi dan mengurangi overfitting. Setiap pohon dibangun dari subset acak data latih dan subset fitur, sehingga menghasilkan pohon yang saling independen. Pada regresi, hasil prediksi adalah rata-rata dari semua prediksi pohon-pohon tersebut. Kelebihan Random Forest adalah kemampuannya menangani data dengan banyak fitur dan menghindari overfitting lebih baik dibanding single decision tree.
 Untuk melatih model RF, dapat dilakukan dengan kode berikut:
 ```sh
 from sklearn.ensemble import RandomForestRegressor
@@ -183,6 +214,7 @@ RF.fit(X_train, y_train)
 models.loc['train_mse','RandomForest'] = mean_squared_error(y_pred=RF.predict(X_train), y_true=y_train)
 ```
 ### Adaptive Boosting (AdaBoost)
+AdaBoost atau Adaptive Boosting adalah metode ensemble learning yang menggabungkan beberapa model lemah (weak learners), biasanya decision stumps (pohon dengan satu split), secara berurutan. Setiap model selanjutnya berfokus pada kesalahan model sebelumnya dengan memberikan bobot lebih besar pada data yang sulit diprediksi. Dalam regresi, model lemah mencoba meminimalkan kesalahan dengan cara menyesuaikan prediksi terhadap residual (selisih antara nilai sebenarnya dan prediksi sebelumnya). Kelebihan AdaBoost adalah kemampuannya untuk meningkatkan akurasi model meskipun hanya menggunakan model lemah, namun ia sensitif terhadap outlier.
 Untuk melatih model AdaBoost, dapat dilakukan dengan kode berikut:
 ```sh
 from sklearn.ensemble import AdaBoostRegressor
