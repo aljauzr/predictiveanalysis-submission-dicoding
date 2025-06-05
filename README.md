@@ -192,6 +192,7 @@ models = pd.DataFrame(index=['train_mse', 'test_mse'],
 ```                      
 ### K-Nearest Neighbor (KNN)
 K-Nearest Neighbor adalah algoritma berbasis instance-based learning, yang berarti ia tidak membentuk model eksplisit melainkan membuat prediksi berdasarkan kedekatan terhadap data latih. Dalam konteks regresi, KNN akan mencari sejumlah k tetangga terdekat dari data uji berdasarkan metrik jarak (umumnya Euclidean), kemudian memprediksi nilai target dengan rata-rata dari target tetangga-tetangga tersebut. Semakin kecil nilai k, model menjadi lebih kompleks dan sensitif terhadap noise (overfitting), sementara nilai k yang besar dapat menyebabkan underfitting.
+Pada implementasi ini, digunakan nilai n_neighbors=10 dan pengukuran jarak Euclidean distance (bawaan dari library SKLearn), yang berarti prediksi didasarkan pada 10 tetangga terdekat. Pemilihan nilai k yang terlalu kecil dapat menyebabkan model overfitting, karena terlalu sensitif terhadap noise, sedangkan nilai k yang terlalu besar dapat menyebabkan underfitting karena prediksi menjadi terlalu umum.
 Untuk melatih model KNN, dapat dilakukan dengan kode berikut:
 ```sh
 from sklearn.neighbors import KNeighborsRegressor
@@ -204,6 +205,12 @@ models.loc['train_mse','knn'] = mean_squared_error(y_pred = knn.predict(X_train)
 ```
 ### Random Forest (RF)
 Random Forest merupakan algoritma ensemble learning berbasis bagging, yang menggabungkan banyak decision tree untuk meningkatkan akurasi dan mengurangi overfitting. Setiap pohon dibangun dari subset acak data latih dan subset fitur, sehingga menghasilkan pohon yang saling independen. Pada regresi, hasil prediksi adalah rata-rata dari semua prediksi pohon-pohon tersebut. Kelebihan Random Forest adalah kemampuannya menangani data dengan banyak fitur dan menghindari overfitting lebih baik dibanding single decision tree.
+Pada model ini, digunakan beberapa parameter penting, yaitu:
+- n_estimators=50: jumlah pohon dalam forest adalah 50.
+- max_depth=16: kedalaman maksimum tiap pohon adalah 16, yang digunakan untuk mengontrol kompleksitas model.
+- random_state=55: untuk memastikan hasil yang dapat direproduksi.
+- n_jobs=-1: memanfaatkan seluruh inti CPU untuk mempercepat pelatihan.
+Dengan konfigurasi ini, Random Forest dapat menangani data berdimensi tinggi dan memiliki kemampuan generalisasi yang lebih baik dibanding decision tree tunggal.
 Untuk melatih model RF, dapat dilakukan dengan kode berikut:
 ```sh
 from sklearn.ensemble import RandomForestRegressor
@@ -215,6 +222,10 @@ models.loc['train_mse','RandomForest'] = mean_squared_error(y_pred=RF.predict(X_
 ```
 ### Adaptive Boosting (AdaBoost)
 AdaBoost atau Adaptive Boosting adalah metode ensemble learning yang menggabungkan beberapa model lemah (weak learners), biasanya decision stumps (pohon dengan satu split), secara berurutan. Setiap model selanjutnya berfokus pada kesalahan model sebelumnya dengan memberikan bobot lebih besar pada data yang sulit diprediksi. Dalam regresi, model lemah mencoba meminimalkan kesalahan dengan cara menyesuaikan prediksi terhadap residual (selisih antara nilai sebenarnya dan prediksi sebelumnya). Kelebihan AdaBoost adalah kemampuannya untuk meningkatkan akurasi model meskipun hanya menggunakan model lemah, namun ia sensitif terhadap outlier.
+Dalam implementasi ini, digunakan parameter:
+- learning_rate=0.05, yang mengontrol kontribusi masing-masing model terhadap prediksi akhir. Nilai yang lebih kecil membuat model belajar lebih perlahan dan dapat mencegah overfitting.
+- random_state=55, untuk hasil yang konsisten saat proses pelatihan diulang.
+Meskipun hanya menggunakan model lemah, AdaBoost mampu meningkatkan akurasi secara signifikan. Namun, algoritma ini cenderung sensitif terhadap data outlier karena bobot yang diberikan bisa menjadi sangat besar untuk data yang sulit diprediksi.
 Untuk melatih model AdaBoost, dapat dilakukan dengan kode berikut:
 ```sh
 from sklearn.ensemble import AdaBoostRegressor
